@@ -3,6 +3,6 @@ class Intersection
 
   def initialize(location, piece=nil)
     @location = location
-    @piece = Piece.new(nil)
+    @piece = piece || Piece.new(nil)
   end
 end
