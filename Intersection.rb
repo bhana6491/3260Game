@@ -1,9 +1,8 @@
 class Intersection
-    attr_accessor :location, :piece
-  
-    def initialize(location = nil)
-      @location = location
-      @piece = nil
-    end
+  attr_accessor :location, :piece
+
+  def initialize(location, piece=nil)
+    @location = location
+    @piece = Piece.new(nil)
   end
-  
+end

@@ -1,11 +1,15 @@
+require_relative "Board"
+require_relative "PlayerPhase"
+require_relative "MoveColor"
 class PlayerStateModule
+    
     attr_accessor :currentBlackPhase, :currentWhitePhase, :currentTurnColor, :boardInstance
   
-    def initialize(boardInstance)
-      @boardInstance = boardInstance
-      @currentBlackPhase = :placing
-      @currentWhitePhase = :placing
-      @currentTurnColor = :white
+    def initialize()
+      @currentBlackPhase = PlayerPhase::PLACING
+      @currentWhitePhase = PlayerPhase::PLACING
+      @currentTurnColor = MoveColor::WHITE
+      @boardInstance = Board # TODO
     end
   
     def UpdatePlayerPhase

@@ -12,7 +12,7 @@ class MoveExecutor
     def makeMove(from_coordinate, to_coordinate, player_state)
       # Executes the move if validated
     end
-  
+
     private
   
     def askForState

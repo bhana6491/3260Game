@@ -1,0 +1,15 @@
+What's the initial player state of each player? 
+  - Assumption white player is starting, black and white are initially placing 
+  - Assumed an initialize function 
+
+Where should the board instance be created
+  - Assumption that it's created in playerState Module 
+
+Intersection class
+  - Assumption of initialization method  
+
+Piece 
+  - color should be of type move color 
+
+Intersection
+  - location should be changed to string. Using strings to signal coordinates on the board in methods like ManipulateBoard
