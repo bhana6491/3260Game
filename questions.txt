@@ -13,3 +13,8 @@ Piece
 
 Intersection
   - location should be changed to string. Using strings to signal coordinates on the board in methods like ManipulateBoard
+
+
+isMoveValid
+- No access to player state, why do we need to verify that the intersection of startLocation has the mill bool set to true? 
+- New algorith - Make sure no piece at end location, and piece at start location and verify that they're adjacent
