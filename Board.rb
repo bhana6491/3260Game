@@ -45,8 +45,6 @@ class Board
         "G7" => ["D7", "G4"]
       }
       @intersection_array = Array.new(24) { |index| Intersection.new(@location_mapping.key(index)) }
-          
-
     end 
   
     def TotalWhitePieces
@@ -57,37 +55,26 @@ class Board
       @intersection_array.count { |intersection| intersection.piece&.colour == MoveColor::BLACK }
     end
     
-    # colour: :WHITE or :BLACK
-    # player_state: :PLACING, :MOVING, :FLYING
-    # from_location: String (?)
-    # to_location: String (?)
-    def ManipulateBoard(colour, player_state, from_location, to_location)
-      
-      # Implementation based on provided algorithm
-
-      # from_intersection = @intersection_array[from_location]
-      # to_intersection = @intersection_array[to_location]
-  
-      # if !from_intersection.isMill && !to_intersection.isMill
-      #   case player_state
-      #   when :PLACING
-      #     to_intersection.piece = Piece.new(colour)
-      #   when :REMOVING
-      #     if can_remove_piece?(from_intersection)
-      #       from_intersection.piece = nil
-      #     end
-      #   when :MOVING
-      #     to_intersection.piece = from_intersection.piece
-      #     from_intersection.piece = nil
-      #   end
-      # end
+    def ManipulateBoard(colour, player_state, from_location, to_location)      
+      if player_state==PlayerState::PLACING
+        piece = Piece.new(colour)
+        PlacePiece(piece,from_location)
+      elsif player_state==PlayerState::REMOVING
+        RemovePiece(from_location)
+      elsif player_state==PlayerState::MOVING
+        MovePiece(from_location, to_location)
     end
   
-    def CalculatePossibleMoves(locations_to_move, intersection_array)
-      # Calculates all possible moves based on the board state
-      #Empty array of locations
-      #Fri 
+    def CalculatePossibleMoves(from_location, player_state, colour)
       possible_moves = []
+      piece = CopyPiece(from_location)
+      if player_state==PlayerState::REMOVING
+        return getRemovalLocationsForPiece(piece)
+      @adjacency_mapping[from_location].each do |end_location|
+        if isMoveValid(from_location,end_location , player_state, colour)
+            possible_moves << end_location 
+      end
+    
 
     end
   
