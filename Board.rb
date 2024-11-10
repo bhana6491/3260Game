@@ -143,6 +143,9 @@ class Board
                     locations << intersection.location
                 elsif !intersection.piece.isMill
                     locations << intersection.location 
+                end
+              end
+            end
         locations
     end
   
