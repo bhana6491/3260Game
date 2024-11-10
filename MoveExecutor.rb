@@ -5,7 +5,7 @@ class MoveExecutor
     @Board = board
   end
 
-  def sendCoordinate(from_coordinate, to_coordinate)
+  def processMove(from_coordinate, to_coordinate)
     game_state = askForState
 
     @From_coordinate = from_coordinate
@@ -47,9 +47,8 @@ end
 
 # Change: Initialized it with an instance of the PlayerStateModule so it can ask for state
 # Assumption: Called the CalculatePossibleMoves method with one argument, from_coordinate
-# Incomplete: sendCoordinate puts "Invalid move" if isPlayerMoveValid returns false 
-# Additon: Added public method sendCoordinate which was mentioned in sequence diagrams
-# Assumption: Removed processMove as it is not clear what purpose it would serve
+# Incomplete: processMove puts "Invalid move" if isPlayerMoveValid returns false 
 # Incomplete: May need to remove a lot of the instance variables as they are unnecessary 
-# Assumption: Changed MakeMove to be private, as it is only called by sendCoordinate
-# Assumption: changed isPlayerMoveValid to be private, as it is only called by sendCoordinate
+# Assumption: Changed MakeMove to be private, as it is only called by processMove
+# Assumption: changed isPlayerMoveValid to be private, as it is only called by processMove
+# Made processMove into a public method that acts as sendCoordinates does in the sequence diagram
