@@ -61,7 +61,6 @@ location_mapping = {
   "G1" => [16, 6], "G4" => [16, 21], "G7" => [16, 36]
 }
 
-
 row, col = location_mapping["A1"]
-board_layout[row][0][col] = 'B'
+# board_layout[row][0][col] = 'B'
 print_board_layout(board_layout)
