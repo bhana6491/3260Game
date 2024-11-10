@@ -1,8 +1,8 @@
+require_relative "MoveColor"
 class PlayerInterface
   def AskModelState(player_state_module)
     # Request the gameboard for the current state
-    state_info = player_state_module.checkState
-    state_info
+    player_state_module.checkState
   end
 
   def AskPlayerTurn(player_state_module)
@@ -12,14 +12,59 @@ class PlayerInterface
 
   def AskIntersections(board)
     # Fetch intersections for board display
-    board.intersection_array.map { |intersection| "#{intersection.location}: #{intersection.piece&.colour || 'Empty'}" }.join("\n")
+    #return a map of coordinate => X,B or W 
+    color_map = {}
+    board.location_mapping.each do |location, index|
+      if board.intersection_array[index].piece
+        if board.intersection_array[index].piece.colour == MoveColor::BLACK
+          color_map[location] = "B"
+        elsif board.intersection_array[index].piece.colour == MoveColor::WHITE
+          color_map[location] = "W"
+        end 
+        
+      else
+        color_map[location] = "X"
+      end
+    end
+    color_map
   end
 
-  def DisplayGameBoardState(model_state, player_turn, intersections)
+  # def DisplayGameBoardState(model_state, player_turn, intersections)
+  def DisplayGameBoardState(board, player_state_module)
+
+    model_state = AskModelState(player_state_module)
+    player_turn = AskPlayerTurn(player_state_module)
+    intersections = AskIntersections(board)
+
+
+
+    # make a map of each coordinate and piece 
+    board = <<-BOARD
+    A    #{intersections["A1"]}-------------#{intersections["A4"]}--------------#{intersections["A7"]}
+         |             |              |
+         |             |              |
+         |             |              |
+    B    |   #{intersections["B2"]}---------#{intersections["B4"]}---------#{intersections["B6"]}    |
+         |   |         |         |    |
+    C    |   |    #{intersections["C3"]}----#{intersections["C4"]}----#{intersections["C5"]}    |    |
+         |   |    |         |    |    |
+    D    #{intersections["D1"]}---#{intersections["D2"]}----#{intersections["D3"]}         #{intersections["D5"]}----#{intersections["D6"]}----#{intersections["D7"]}
+         |   |    |         |    |    |
+    E    |   |    #{intersections["E3"]}----#{intersections["E4"]}----#{intersections["E5"]}    |    |
+         |   |         |         |    |
+    F    |   #{intersections["F2"]}---------#{intersections["F4"]}---------#{intersections["F6"]}    |
+         |             |              |
+         |             |              |
+         |             |              |
+    G    #{intersections["G1"]}-------------#{intersections["G4"]}--------------#{intersections["G7"]}
+
+         1    2    3    4    5    6    7
+BOARD
+
+    puts board
     # Display board state and player status
-    puts "Current Game State: #{model_state}"
-    puts "Player Turn: #{player_turn}"
-    puts "Board Intersections:\n#{intersections}"
+    puts "Current Player Phase: #{model_state[:phase]}"
+    puts "Current Player Color: #{model_state[:color]}"
   end
 
   def AskNewMill(board)
@@ -74,7 +119,7 @@ class PlayerInterface
 
   def AskMoveDestination(valid_move_subset)
     # Ask player for move destination
-    puts "Select your move destination from the available options: #{valid_move_subset.join(', ')}"
+    print "Select your move destination from the available options: #{valid_move_subset.join(', ')} - "
     gets.chomp
   end
 
@@ -88,3 +133,5 @@ class PlayerInterface
     puts "Your move was successful!"
   end
 end
+
+# Change: Changed signature of DisplayBoardState method signature

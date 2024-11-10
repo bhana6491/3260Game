@@ -3,6 +3,7 @@ class MoveExecutor
 
   def initialize(board, player_state_module)
     @Board = board
+    @player_state_module = player_state_module
   end
 
   def processMove(from_coordinate, to_coordinate)
@@ -13,7 +14,7 @@ class MoveExecutor
     @player_state = game_state[:phase]
     @Move_colour = game_state[:color]
 
-    valid = isPlayerMoveValid(from_coordinate, to_coordinate, @player_state[:phase], @player_state[:color])
+    valid = isPlayerMoveValid(@From_coordinate, @To_coordinate, @player_state, @player_state[:color])
 
     if valid
       makeMove(from_coordinate, to_coordinate, @player_state)
@@ -21,15 +22,9 @@ class MoveExecutor
       puts "Invalid move" 
     end
   end
-
-  private
-
-  def askForState
-    player_state_module.checkState
-  end
   
   def makeMove(from_coordinate, to_coordinate, player_state)
-    board.ManipulateBoard(player_state[:color], player_state[:phase], from_coordinate, to_coordinate)
+    board.ManipulateBoard(@player_state[:color], @player_state[:phase], from_coordinate, to_coordinate)
   end
 
   def isPlayerMoveValid(from_coordinate, to_coordinate, player_state, move_colour)
@@ -42,6 +37,12 @@ class MoveExecutor
     else
       return false
     end
+  end
+  
+  private
+  
+  def askForState
+    @player_state_module.checkState
   end
 end
 

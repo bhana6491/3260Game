@@ -7,33 +7,40 @@ class PlayerStateModule
     
     attr_accessor :currentBlackPhase, :currentWhitePhase, :currentTurnColor, :boardInstance
   
-    def initialize()
+    def initialize(board)
       @currentBlackPhase = PlayerPhase::PLACING
       @currentWhitePhase = PlayerPhase::PLACING
       @currentTurnColor = MoveColor::WHITE
-      @boardInstance = Board # TODO
+      @boardInstance = board # TODO
+      @turn = 0
     end
   
     def UpdatePlayerPhase
+
+      @turn = @turn + 1
       total_black_pieces = @boardInstance.TotalBlackPieces
       total_white_pieces = @boardInstance.TotalWhitePieces
 
       if @currentTurnColor == MoveColor::BLACK
         if total_black_pieces <= 3 && @currentBlackPhase == PlayerPhase::MOVING
           change_state(PlayerPhase::FLYING)
-        elsif total_black_pieces == 9 && @currentBlackPhase == PlayerPhase::PLACING
+        elsif @turn == 9 && @currentBlackPhase == PlayerPhase::PLACING
           change_state(PlayerPhase::MOVING)
         end
       elsif @currentTurnColor == MoveColor::WHITE
         if total_white_pieces <= 3 && @currentWhitePhase == PlayerPhase::MOVING
           change_state(PlayerPhase::FLYING)
-        elsif total_white_pieces == 9 && @currentWhitePhase == PlayerPhase::PLACING
+        elsif @turn == 9 && @currentWhitePhase == PlayerPhase::PLACING
           change_state(PlayerPhase::MOVING)
         end
       end
+      if @currentTurnColor==MoveColor::WHITE
+        @currentTurnColor = MoveColor::BLACK
+      else
+        @currentTurnColor = MoveColor::WHITE 
+      end
     end
         
-    end
   
     def checkState
       # Retrieves and returns current player phase and state
@@ -53,4 +60,6 @@ class PlayerStateModule
       end
     end
   end
+
+  # Change: Added instance variable for turn
   

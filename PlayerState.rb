@@ -5,6 +5,6 @@ class PlayerState
     REMOVE = :REMOVE
 
     def self.all_phases
-        [PLACING, MOVING, FLYING]
+        [PLACING, MOVING, FLYING, REMOVE]
     end
 end

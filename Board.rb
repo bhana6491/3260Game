@@ -3,7 +3,7 @@ require_relative "Piece"
 require_relative "MoveColor"
 require_relative "PlayerState"
 class Board
-    attr_accessor :intersection_array
+    attr_accessor :intersection_array, :location_mapping
   
     def initialize
       @location_mapping = {
@@ -60,7 +60,7 @@ class Board
       if player_state==PlayerState::PLACING
         piece = Piece.new(colour)
         PlacePiece(piece,from_location)
-      elsif player_state==PlayerState::REMOVING
+      elsif player_state==PlayerState::REMOVE
         RemovePiece(from_location)
       elsif player_state==PlayerState::MOVING
         MovePiece(from_location, to_location)
@@ -69,15 +69,26 @@ class Board
   
     def CalculatePossibleMoves(from_location, player_state, colour)
       possible_moves = []
-      piece = CopyPiece(from_location)
-      if player_state==PlayerState::REMOVING
-        return getRemovalLocationsForPiece(piece)
-      end 
-      @adjacency_mapping[from_location].each do |end_location|
-        if isMoveValid(from_location,end_location , player_state, colour)
-            possible_moves << end_location 
+
+      if player_state==PlayerState::PLACING || player_state==PlayerState::FLYING
+        @location_mapping.each do |location, index|
+          if !@intersection_array[index].piece
+            possible_moves << location
+          end
+        end
+      else
+        piece = CopyPiece(from_location)
+
+        if player_state==PlayerState::REMOVING
+          return getRemovalLocationsForPiece(piece)
         end 
-      end 
+        
+        @adjacency_mapping[from_location].each do |end_location|
+          if isMoveValid(from_location,end_location , player_state, colour)
+              possible_moves << end_location 
+          end
+        end
+      end
       possible_moves
     end
   
@@ -147,10 +158,9 @@ class Board
   
     def MovePiece(initial_location, final_location)
         from = @location_mapping[initial_location]
-        to = @location_mapping[final_location]
-        piece = @intersection_array[from].piece 
-        PlacePiece(piece, to)
-        RemovePiece(from)
+        piece = @intersection_array[from].piece
+        PlacePiece(piece, final_location)
+        RemovePiece(initial_location)
     end
   
     def CopyPiece(location)
