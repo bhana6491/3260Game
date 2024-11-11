@@ -8,31 +8,27 @@ class MoveExecutor
 
   def processMove(from_coordinate, to_coordinate)
     game_state = askForState
+    player_state = game_state[:phase]
+    move_colour = game_state[:color]
 
-    @From_coordinate = from_coordinate
-    @To_coordinate = to_coordinate
-    @player_state = game_state[:phase]
-    @Move_colour = game_state[:color]
-
-    valid = isPlayerMoveValid(@From_coordinate, @To_coordinate, @player_state, @player_state[:color])
-
+    valid = isPlayerMoveValid(from_coordinate, to_coordinate, player_state, move_colour)
     if valid
-      makeMove(from_coordinate, to_coordinate, @player_state)
+      makeMove(from_coordinate, to_coordinate, game_state)
+      true
     else
-      puts "Invalid move" 
+      false
     end
   end
   
   def makeMove(from_coordinate, to_coordinate, player_state)
-    board.ManipulateBoard(@player_state[:color], @player_state[:phase], from_coordinate, to_coordinate)
+    @Board.ManipulateBoard(player_state[:color], player_state[:phase], from_coordinate, to_coordinate)
   end
 
   def isPlayerMoveValid(from_coordinate, to_coordinate, player_state, move_colour)
     # The method retrieves the move subset array from the board instance variable
-    valid_moves = board.CalculatePossibleMoves(@From_coordinate)
-
+    valid_moves = @Board.CalculatePossibleMoves(from_coordinate, player_state, move_colour)
     # The method searches the move subset for from_coordinate and to_coordinate as a possible move
-    if valid_moves.include?(@To_coordinate)
+    if valid_moves.include?(to_coordinate)
       return true
     else
       return false

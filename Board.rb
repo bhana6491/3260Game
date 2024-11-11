@@ -76,12 +76,11 @@ class Board
             possible_moves << location
           end
         end
+        
       else
-        piece = CopyPiece(from_location)
-
-        if player_state==PlayerState::REMOVING
-          return getRemovalLocationsForPiece(piece)
-        end 
+        if player_state==PlayerState::REMOVE
+          return getRemovalLocations(colour)
+        end
         
         @adjacency_mapping[from_location].each do |end_location|
           if isMoveValid(from_location,end_location , player_state, colour)
@@ -93,16 +92,24 @@ class Board
     end
   
     def checkForNewMills
-    @mills.each do |mill|
-      first = @intersection_array[@location_mapping[mill[0]]]
-      second =  @intersection_array[@location_mapping[mill[1]]]
-      third =  @intersection_array[@location_mapping[mill[2]]]
-      if first && second && third && first.piece.colour==second.piece.colour && second.piece.colour==third.piece.colour
-        first.piece.isMill = true
-        second.piece.isMill = true
-        third.piece.isMill=true
+      millCreated = false
+      @mills.each_with_index do |mill, mill_id|
+        first = @intersection_array[@location_mapping[mill[0]]].piece
+        second = @intersection_array[@location_mapping[mill[1]]].piece
+        third = @intersection_array[@location_mapping[mill[2]]].piece
+    
+        next if !first || !second || !third
+    
+        if first.colour == second.colour && second.colour == third.colour
+          unless [first, second, third].all? { |p| p.mill_memberships.include?(mill_id) }
+            [first, second, third].each { |p| p.mill_memberships << mill_id unless p.mill_memberships.include?(mill_id) }
+            millCreated = true
+          end
+        else
+          [first, second, third].each { |p| p.mill_memberships.delete(mill_id) }
+        end
       end
-    end
+      millCreated
     end
     
     def isMoveValid(startLocation, endLocation, player_state, colour)
@@ -120,7 +127,7 @@ class Board
           return false 
         end 
         
-        if player_state==PlayerState::REMOVING && colour==@intersection_array[start_idx].piece.colour#Must be removing opponents piece
+        if player_state==PlayerState::REMOVE && colour==@intersection_array[start_idx].piece.colour#Must be removing opponents piece
           return false 
         end
 
@@ -139,17 +146,16 @@ class Board
       return true 
     end
   
-    def getRemovalLocationsForPiece(piece)
-        opponents_color = piece.color == MoveColor::WHITE ? MoveColor::BLACK : MoveColor::WHITE        
+    def getRemovalLocations(colour)
         locations = []
-
-        opponent_pieces = piece.color == MoveColor::WHITE ? TotalBlackPieces : TotalWhitePieces                
+        opponent_pieces = colour == MoveColor::WHITE ? self.TotalBlackPieces : self.TotalWhitePieces
+        opponents_color = colour == MoveColor::WHITE ? MoveColor::BLACK : MoveColor::WHITE          
         for intersection in @intersection_array
-            if intersection.piece && intersection.piece.color==opponents_color 
+            if intersection.piece && intersection.piece.colour==opponents_color 
                 if intersection.piece.isMill && opponent_pieces <= 3 # Can steal it because this is last mill
                     locations << intersection.location
                 elsif !intersection.piece.isMill
-                    locations << intersection.location 
+                    locations << intersection.location
                 end
               end 
             end 
@@ -176,46 +182,7 @@ class Board
     def PlacePiece(piece, location)
         index = @location_mapping[location]
         @intersection_array[index].piece = piece 
-    end
-
-    # THESE TWO CLASSES NEED TO GO ELSEWHERE WHERE BOARD NEEDS TO BE PRINTED 
-    def piece_at(location)
-      piece = @intersection_array[@location_mapping[location]].piece
-      if !piece
-        "X"
-      elsif piece.colour==MoveColor::BLACK
-        "B"
-      else
-        "W"
-      end
-    end
-    
-    def draw_board
-      board = <<-BOARD
-      A    #{piece_at("A1")}-------------#{piece_at("A4")}--------------#{piece_at("A7")}
-           |             |              |
-           |             |              |
-           |             |              |
-      B    |   #{piece_at("B2")}---------#{piece_at("B4")}---------#{piece_at("B6")}    |
-           |   |         |         |    |
-      C    |   |    #{piece_at("C3")}----#{piece_at("C4")}----#{piece_at("C5")}    |    |
-           |   |    |         |    |    |
-      D    #{piece_at("D1")}---#{piece_at("D2")}----#{piece_at("D3")}         #{piece_at("D5")}----#{piece_at("D6")}----#{piece_at("D7")}
-           |   |    |         |    |    |
-      E    |   |    #{piece_at("E3")}----#{piece_at("E4")}----#{piece_at("E5")}    |    |
-           |   |         |         |    |
-      F    |   #{piece_at("F2")}---------#{piece_at("F4")}---------#{piece_at("F6")}    |
-           |             |              |
-           |             |              |
-           |             |              |
-      G    #{piece_at("G1")}-------------#{piece_at("G4")}--------------#{piece_at("G7")}
-
-           1    2    3    4    5    6    7
-BOARD
-  
-      puts board
-    end
-    
+    end    
   end
 
   

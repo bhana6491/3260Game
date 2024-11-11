@@ -12,26 +12,29 @@ class PlayerStateModule
       @currentWhitePhase = PlayerPhase::PLACING
       @currentTurnColor = MoveColor::WHITE
       @boardInstance = board # TODO
-      @turn = 0
+      @turn = 1
     end
   
     def UpdatePlayerPhase
 
       @turn = @turn + 1
+
+      # puts "Turn: #{@turn}"
+
       total_black_pieces = @boardInstance.TotalBlackPieces
       total_white_pieces = @boardInstance.TotalWhitePieces
 
       if @currentTurnColor == MoveColor::BLACK
         if total_black_pieces <= 3 && @currentBlackPhase == PlayerPhase::MOVING
-          change_state(PlayerPhase::FLYING)
-        elsif @turn == 9 && @currentBlackPhase == PlayerPhase::PLACING
-          change_state(PlayerPhase::MOVING)
+          changeState(PlayerPhase::FLYING)
+        elsif @turn >= 18 && @currentBlackPhase == PlayerPhase::PLACING
+          changeState(PlayerPhase::MOVING)
         end
       elsif @currentTurnColor == MoveColor::WHITE
         if total_white_pieces <= 3 && @currentWhitePhase == PlayerPhase::MOVING
-          change_state(PlayerPhase::FLYING)
-        elsif @turn == 9 && @currentWhitePhase == PlayerPhase::PLACING
-          change_state(PlayerPhase::MOVING)
+          changeState(PlayerPhase::FLYING)
+        elsif @turn >= 18 && @currentWhitePhase == PlayerPhase::PLACING
+          changeState(PlayerPhase::MOVING)
         end
       end
       if @currentTurnColor==MoveColor::WHITE
@@ -45,9 +48,9 @@ class PlayerStateModule
     def checkState
       # Retrieves and returns current player phase and state
       if @currentTurnColor == MoveColor::BLACK
-        { phase: @currentBlackPhase, color: MoveColor::BLACK }
+        { 'phase': @currentBlackPhase, 'color': MoveColor::BLACK }
       else
-        { phase: @currentWhitePhase, color: MoveColor::WHITE }
+        { 'phase': @currentWhitePhase, 'color': MoveColor::WHITE }
       end
     end
   
